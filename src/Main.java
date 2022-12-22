@@ -97,7 +97,7 @@ public class Main {
 
         // 学有余力：
         //  还记得 C/C++ 中的 auto 自动推断变量类型吗？
-        //  java 的 var 也支持这样的功能，并且实际的功能会比 C/C++ 强大很多
+        //  java 的 var 也支持这样的功能，并且实际的能力会比 C/C++ 强大很多
         var str = "Hello Var!";
         var aChar = 'a';
         var aInt = 16;
@@ -350,7 +350,7 @@ public class Main {
         // hasNext() 方法会判断之后是否会有其他内容
         // hasNextInt() hasNextDouble() 等用于判断是否还存在下一个数字
 
-        // 拓展内容：
+        // 学有余力：
         //  Scanner 读取的输入流在终端上是可见的，因此它对密码类型的输入是无能为力的。
         // 如果想让输入不可见，可以试试 Console 类
         //
