@@ -1,12 +1,29 @@
-public class Main { // Java 类的类名，需与文件名一致 (例如本文件名为 Main.java)
-    public static void main(String[] args) { // 主方法必须为 public static void 类型，必须要有 String[] args 参数
-        System.out.println("We will not use 'Hello World'!"); //调用 System 类的 out 对象的 println 方法 向控制台打印内容
+// 《Java 核心技术》笔记
+
+import java.io.*;
+import java.util.*;
+
+// Java 类的类名，需与文件名一致 (例如本文件名为 Main.java)
+public class Main {
+    // 主方法必须为 public static void 类型，必须要有 String[] args 参数，名字必须要为 main
+    // 初学者不需要去理解各个字段的意义
+    public static void main(String[] args) {
+        //调用 System 类的 out 对象的 println 方法 向控制台打印内容，初学者不需要去理解
+        System.out.println("We will not use 'Hello World'!");
+
         basicClassTest();
         StringTest();
         StringBuilderTest();
+        PrintStreamTest();
+        ScannerTest();
+        BlockTest();
+        IfTest();
     }
 
-    public static void basicClassTest(){ // Java 的基本类
+
+    // Java 的基本类
+    public static void basicClassTest(){
+
         // Java 的类型判断标准
         // 一般来说 类似于 int char boolean double 这样的以小写字母开头的类为基础类型
         // 他们本身就是实例，不存在指针指向
@@ -72,9 +89,16 @@ public class Main { // Java 类的类名，需与文件名一致 (例如本文�
         char c = 'd';
         // char 类，字符型，占用 2字节 16位
         // 包装类：Character
+
+        enum Size{SMALL, MIDDLE, BIG};
+        Size size = Size.SMALL;
+        // enum 类，枚举类
+        // 包装类：Enum
     }
 
-    public static void StringTest(){  // Java字符串类 java.lang.String
+
+    // Java字符串类 java.lang.String
+    public static void StringTest(){
 
         // String 为一个静态类，用于存放一串静态字符串
         //
@@ -177,9 +201,15 @@ public class Main { // Java 类的类名，需与文件名一致 (例如本文�
         // 对于 str1 = str2 只是将 str2 的地址赋给 str1 ，并不会分配新的空间占用
         // 由于 String 是一个静态类，这本身并不会存在很大的问题
         //
+
+        // 学有余力：
+        //  在 API 注释中有一些 CharSequence 类的参数，实际上这是一种接口类型
+        //  现在只需要知道完全可以使用 String 类 作为 CharSequence 类传参
     }
 
-    public static void StringBuilderTest(){ //字符串构建器 java.lang.StringBuilder
+
+    // 字符串构建器 java.lang.StringBuilder
+    public static void StringBuilderTest(){
         //
         // StringBuilder 是一个动态类，用于方便地构建字符串
         //
@@ -221,5 +251,164 @@ public class Main { // Java 类的类名，需与文件名一致 (例如本文�
         // 此时 builder1 上的内容为 '我是在 builder1 对象上添加的' '我是在 builder2 对象上添加的'
         // 此时 builder2 上的内容为 '我是在 builder1 对象上添加的' '我是在 builder2 对象上添加的'
         // 由于这两个对象指向的是一个实例，因此这两个对象是等价的
+
+        // 学有余力：
+        //  StringBuilder 类是从 Java 5 版本后被引入的
+        //  它的前身是 StringBuffer 类，允许采用多线程进行添加与删除，但效率偏低
+    }
+
+
+    // 标准输出流 java.io.PrintStream out
+    public static void PrintStreamTest(){
+        //
+        // 关于 Java io 流的概念是一个目前可能还难以理解的概念
+        // 但是我们在前面的学习中已经接触到了比较常用的 PrintStream 对象 System.out
+        // 这就是一个典型的输出流，用于向终端输出字符串
+        //
+
+        PrintStream cout = System.out; //这里把它命名为 cout 没有别的意思……
+
+        cout.println("Hello world!");
+        // println() 用于向流中输入内容，支持所有基本类和部分自定类，并在结尾加上一个回车
+
+        cout.print("Hello world");
+        // print() 用于向流中输入内容，支持所有基本类和部分自定类，但在结尾不会加回车
+        // 以上代码输出后下一次输出内容会紧跟在 world 后面
+
+        cout.printf("The number is %d\n", 12);
+        // printf(String, Object...) 与 C语言 中的 printf 函数功能是一致的
+
+        cout.append("Hello world\n");
+        // append() 与 print() 功能类似
+    }
+
+
+    // 输入流扫描器 java.util.Scanner 与标准输入流 java.io.InputStream in
+    public static void ScannerTest(){
+        //
+        // 注意： Scanner 类并不会默认集成在 java 代码中，需要在类外声明引入
+        //
+        // import java.util.Scanner;    // 只引入 Scanner
+        // import java.util.*;          // 引入 java.util 包内的所有类
+        //
+        // import 有点类似于 C/C++ 的 #include 但两者存在一些区别
+        //
+        // Scanner 的构造函数为 Scanner(InputStream) 需要一个输入流作为参数
+        //
+        // 与 C/C++ 一样，Java的输入与输出也是流形式的
+        // 但两者对流的处理方法有些许不同
+        // 下面代码将演示如何使用 Scanner 类从标准输入流（终端）读取信息
+        //
+        //
+        //
+        Scanner in = new Scanner(System.in);
+        String resStr = in.nextLine();
+        System.out.println(resStr);
+        //
+        // 该代码作用是将用户输入的内容重新输出出来
+        //
+        // 代码中传入 Scanner 构造函数的参数 System.in 与上一节中的 System.out 相反
+        // 它是一个标准输入流，输入源来自终端
+        // System.out 与 System.in 就像 C/C++ 的 cout 与 cin 一样，是一个 java 本身提供的流函数
+        //
+        // 上面代码片段中的 nextLine() 方法会读取整一行，包括空格
+        // 而如果使用 next() 方法便会在读取到的第一个空格处停下
+        //
+        // ** 为了方便程序运行，以下的方法仅做解释，不会嵌入到代码里 **
+        //
+        // Boolean bo = in.nextBoolean();
+        // System.out.println(bo);
+        //
+        // nextBoolean() 方法会读取到下一个 boolean 类型输入
+        // 值得注意的是，它能读取到的传入不是 0 和 1 ，而是 false 和 true
+        // 而有意思的是，这个 false 与 true 是大小写不严判的
+        // 例如传入 FALSE 或者 TrUe 都是能够被正确识别出来的
+        //
+        //
+        // int num1 = in.nextInt();
+        // System.out.println(num1);
+        //
+        // nextInt() 方法会读取到下一个 int 类型输入
+        // nextDouble() 方法会读取到下一个 double 类型输入
+        // nextByte() nextShort() nextLong() nextFloat() 等也是类似
+        //
+        // boolean notFinished = in.hasNext();
+        // hasNext() 方法会判断之后是否会有其他内容
+        // hasNextInt() hasNextDouble() 等用于判断是否还存在下一个数字
+
+        // 拓展内容：
+        //  Scanner 读取的输入流在终端上是可见的，因此它对密码类型的输入是无能为力的。
+        // 如果想让输入不可见，可以试试 Console 类
+        //
+        // Console cons = System.console();
+        // char[] password = cons.readPassword("请输入密码：");
+        //
+        // 但使用该类的前提是程序需运行在一个真正的终端，而不是类似于 JetBrains IDEA 或者 Visual Studio Code 那样的内嵌终端里
+        // 如果使用内嵌终端， System.console() 很可能会返回一个 null 值
+        //
+        // Console 处理其他类型的输入是不方便的，因为它只具有 readLine() 这一种读取一行的方法
+        //
+
+    }
+
+
+    // 块作用域 (概念)
+    public static void BlockTest(){
+        // 每一个大括号所包含的范围称为一个 块(block)
+        // 与 C/C++ 相像的是，Java 中一个变量的生命周期是从它的块内定义开始，到块的结束
+        // 例如以下代码
+        int a = 1;
+        {
+            int b = 2;
+            System.out.println("a = " + a); // 变量 a 的生命周期还没有结束，运行正常
+            /* ... */
+        }
+        //System.out.println("b = " + b); // 编译报错，因为变量 b 的生命周期在上一个 } 处就已经结束
+
+        // 另外，由于 Java 没有像 C++ 的名字空间概念，也不包容重名变量的声明
+        // 因此内部块内变量的声明不能与外部变量重名
+        int c = 3;
+        {
+            int d = 4;
+            //int c = 5; // 在 C/C++ 里是合法的，但在 Java 里会报错
+        }
+    }
+
+
+    // 条件语法 (概念)
+    public static void IfTest(){
+        // Java 的条件 与 C/C++ 的用法非常相似
+        // 但有一点不同，条件传参必须传入一个 boolean 类，别的类型的表达式是不允许的
+        // 在 C/C++ 中，可能会有以下写法
+        //
+        //      int p;
+        //      /* ... */
+        //      if(!p)
+        //          printf("p为0\n");
+        //
+        // C/C++中如果把一个 int 类或者别的类作为条件传入时
+        // 编译器会自动将其转换为 bool 类再进行判断
+        // 但是 Java 出于某种原因 (不会真有人把 == 写成 = 吧) 并没有设置这样的转换
+        //
+        // Java 的条件语法
+        // if (boolean) [单条语句或一个块]
+        // while (boolean) [单条语句或一个块]
+        // do [单条语句或一个块] while (boolean)
+        // for (循环前执行; boolean; 每次循环后执行) [单条语句或一个块]
+        //
+        // switch (变量) {
+        //   case 常量 -> [单条语句或一个块] break;
+        //   case 常量 -> [单条语句或一个块] break;
+        //   /* ... */
+        //   default -> [单条语句或一个块]
+        // }
+        // 注： switch case语句后使用 "->" 或者 ":" 都是可以的
+        // 如果引入的变量是一个 enum 类对象，则 case 后的常量前不需要加 类名.
+        //
+        // 另外，与 C++ 一样， Java 也支持新版 for each 循环遍历方法
+        // for (类名 变量名 : 类数组) [单条语句或一个块]
+        // 例如
+        int[] arr = {1, 2, 3, 4, 5, 6};
+        for(int i : arr) System.out.println(i);
     }
 }
