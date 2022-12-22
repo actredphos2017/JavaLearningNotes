@@ -94,6 +94,20 @@ public class Main {
         Size size = Size.SMALL;
         // enum 类，枚举类
         // 包装类：Enum
+
+        // 学有余力：
+        //  还记得 C/C++ 中的 auto 自动推断变量类型吗？
+        //  java 的 var 也支持这样的功能，并且实际的功能会比 C/C++ 强大很多
+        var str = "Hello Var!";
+        var aChar = 'a';
+        var aInt = 16;
+        var aDouble = 11.4514;
+        var vec = new Vector<Integer>();
+        vec.add(1);
+        vec.add(2);
+        vec.add(3);
+        for(var i : vec)
+            System.out.println(i);
     }
 
 
