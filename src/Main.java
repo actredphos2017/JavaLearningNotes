@@ -1,6 +1,7 @@
 // 《Java 核心技术》笔记
 
 import java.io.*;
+import java.math.BigInteger;
 import java.util.*;
 
 // Java 类的类名，需与文件名一致 (例如本文件名为 Main.java)
@@ -18,15 +19,48 @@ public class Main {
         ScannerTest();
         BlockTest();
         IfTest();
+        bigIntegerTest();
+        arrayTest();
     }
 
+    // Java 基础
+    //
+    // 1.三个文件类型
+    // .java .class .jar
+    //
+    // .java 为 java 源码程序，例如此文件就是一个 java 源码
+    //
+    // .class 为以字节码形式存在的一个类，如果里面存在 main 函数，便可以直接在 JVM 内执行
+    //
+    // .jar 为 java 编译后字节码的一个包文件，里面包含了一系列类以及所需的资源
+    // 如果内部存在程序入口，可以直接在 JVM 内执行
+    // 也可作为外部库使用，放入项目目录下的 lib 目录里，然后在 IDE 内设置导入该类的源
+    // 之后就可以在项目中随意使用该类了
+    //
+    // 2.三个环境
+    //
+    // *** JDK 包含 JRE 包含 JVM ***
+    //
+    // JVM 全称 Java Virtual Machine ，即 Java 虚拟机，是一个引擎
+    // 能将 Java 字节码文件转换为系统能识别并执行的二进制文件
+    //
+    // JRE 全程 Java Runtime Environment ， 即 Java 运行时环境，包含库、类加载器和 JVM
+    //
+    // JDK 全程 Java Development Kit, 即 Java 开发工具包，包含 JRE 、跨平台软件开发环境
+    //
+    // 如果你只是想运行 Java 程序，只需要 JRE ，如果你是 Java 软件开发者，需要的是 JDK
+    // 一个电脑上能同时安装多个版本的 JDK 、 JRE ，大多是 Java IDE 可以选择不同版本 JDK 进行编译
+    // 运行一个 Java 程序既可以使用 JRE 也可以使用 JDK 。
+    // 一台电脑上同时安装相同版本的 JRE 和 JDK 时， JRE 有可能是冗余的。
+    //
+    // Java 的函数称为方法
 
-    // Java 的基本类
+    // Java 的类 (重要)
     public static void basicClassTest(){
 
         // Java 的类型判断标准
         // 一般来说 类似于 int char boolean double 这样的以小写字母开头的类为基础类型
-        // 他们本身就是实例，不存在指针指向
+        // 他们本身就是对象，不存在引用
         //
         // 例：
 
@@ -36,21 +70,44 @@ public class Main {
         System.out.println("num1 的值为 " + num1);
         System.out.println("num2 的值为 " + num2);
 
-        // 而一般类似于 String Vector Array 等以大写字母开头的类为自定义类
-        // 他们的对象实质上为指向实例的指针
-        // 因此最好在声明时就要给他们赋值，若不赋值他们为 null
-        // 自定义类的定义方法为
-        // AClass object = new AClass(...各种参数);
+        // 而一般类似于 String Vector Array 等以大写字母开头的类为自定类
+        //
+        //  *** 以自定类为类型声明的变量只是一个对象的引用 ***
+        //  *** 以自定类为类型声明的变量只是一个对象的引用 ***
+        //  *** 以自定类为类型声明的变量只是一个对象的引用 ***
+        //
+        // 如果不清楚这句话意味着什么，请见以下范例
+        //
+        // 自定义类引用的声明方法
+        // AClass object;        // 注意：与 C/C++ 不同， object 变量并不是对象，而是 AClass 类的引用
+        // 由于生成了引用但没有引用任何对象，因此 object 的值此时获得初始值 null
+        //
+        // 用 new 关键字可以生成类的对象
+        // new AClass(构造器参数...);     // 这里实质上创造了一个匿名对象
+        // 注意这个语句其实并不准确，因为它是在野生范围内生成的一个对象，这个对象并没有传入一个方法，也没有引用
+        // 因此刚创建完这个对象，这个对象立刻就会被回收
+        // Java 独特的内存管理机制中，凡是断开所有引用的对象都会被直接回收
+        // 可以把 new 看成一个生成对象的方法
+        //
+        // 如果将类的引用与类的对象连接起来
+        // object = new AClass(构造器参数...);
+        // 这样 object 就完成了一个对象的引用
+        // 之后便可以通过 object 来操作这个对象了
+        //
+        // 最好在声明时就要给他们初始化，若不赋值他们为 null
+        // AClass object = new AClass(构造器参数...);
+        //
+        // 另外也会存在一个对象连接多个引用的情况
         //
         // 例：
         // （MyInt 是一个虚构的自定义动态类）
         //
         // MyInt num1;              // 此时 num1 为 null;
-        // num1 = new MyInt(1);     // 此时 num1 初始化，被赋予了一个 MyInt 类的实例
-        // MyInt num2 = num1;       // 新建了一个 num2 指向了 num1
+        // num1 = new MyInt(1);     // new 关键字初始化，被赋予了一个 MyInt 类的对象
+        // MyInt num2 = num1;       // 新建了一个 num2 ，与 num1 引用一样的对象
         // num2.setNum(2);          // 此时 num2 变成了 2， num1 也变成了 2
         //
-        // 由于 num1 与 num2 都指向相同的实例，因此 num1 的值也会跟着变
+        // 由于 num1 与 num2 都引用相同的对象，因此 num1 的值也会跟着变
         //
         // 在实际设计自定义类型时，最好也设为大写开头以方便辨认
 
@@ -110,6 +167,10 @@ public class Main {
             System.out.println(i);
     }
 
+    // * 注意： Java 并不支持运算符的重载
+    // * 这意味着不能像编写 C++ 程序那样自定义 + - * / 等运算符功能
+    // * Java 确实给 String 提供了 + 号的字符串拼接功能，但没有为其他运算符重载
+    // * 但除 String 与一些基本类之外别的类基本不能使用运算符
 
     // Java字符串类 java.lang.String
     public static void StringTest(){
@@ -153,9 +214,10 @@ public class Main {
         // length() 返回该字符串的单元个数，超出 UTF-16 的部分需要两个代码单元进行存储
         // 因此该方法可能不能获取到确切的字符串长度
 
-        System.out.println("字符串码点：" + str1.codePoints().toArray().toString());
+        System.out.println("字符串码点：" + Arrays.toString(str1.codePoints().toArray()));
         // codePoints() 返回该字符串的码点迭代器 IntStream
         // 其内置的 toArray() 方法可将其转换为 int[] 数组
+        // Arrays.toString() 方法会在稍后介绍
 
 
         System.out.println();
@@ -210,13 +272,12 @@ public class Main {
         // 即 str = str.substring(0,3) + 'a' + str.substring(4,str.length())
         //
         // 2.
-        // String 为一个类，它的对象与基本类型有很大不同，它是一个指针，指向的是一个实例
+        // String 为一个类，它的对象与基本类型有很大不同，它是一个对象的引用
         // 因此会存在一个对象的值 null 的情况，因此需要对于不确定的 String 对象进行判断
         // 对于 str1 = str2 只是将 str2 的地址赋给 str1 ，并不会分配新的空间占用
         // 由于 String 是一个静态类，这本身并不会存在很大的问题
         //
-
-        // 学有余力：
+        
         //  在 API 注释中有一些 CharSequence 类的参数，实际上这是一种接口类型
         //  现在只需要知道完全可以使用 String 类 作为 CharSequence 类传参
     }
@@ -249,7 +310,7 @@ public class Main {
         // toString() 返回字符串
 
         
-        // 注意：由于 StringBuilder 为动态自定义类，这就意味着存在多个对象指向同一个实例的情况
+        // 注意：由于 StringBuilder 为动态自定义类，这就意味着存在多个对象引用同一个对象的情况
         // 例如以下代码：
 
         StringBuilder builder1 = new StringBuilder();
@@ -264,7 +325,7 @@ public class Main {
         // 代码的输出结果如下：
         // 此时 builder1 上的内容为 '我是在 builder1 对象上添加的' '我是在 builder2 对象上添加的'
         // 此时 builder2 上的内容为 '我是在 builder1 对象上添加的' '我是在 builder2 对象上添加的'
-        // 由于这两个对象指向的是一个实例，因此这两个对象是等价的
+        // 由于这两个变量是同一个对象的引用，因此这两个变量是等价的
 
         // 学有余力：
         //  StringBuilder 类是从 Java 5 版本后被引入的
@@ -290,7 +351,7 @@ public class Main {
         // 以上代码输出后下一次输出内容会紧跟在 world 后面
 
         cout.printf("The number is %d\n", 12);
-        // printf(String, Object...) 与 C语言 中的 printf 函数功能是一致的
+        // printf(String, Object...) 与 C语言 中的 printf 方法功能是一致的
 
         cout.append("Hello world\n");
         // append() 与 print() 功能类似
@@ -307,7 +368,7 @@ public class Main {
         //
         // import 有点类似于 C/C++ 的 #include 但两者存在一些区别
         //
-        // Scanner 的构造函数为 Scanner(InputStream) 需要一个输入流作为参数
+        // Scanner 的构造方法为 Scanner(InputStream) 需要一个输入流作为参数
         //
         // 与 C/C++ 一样，Java的输入与输出也是流形式的
         // 但两者对流的处理方法有些许不同
@@ -321,9 +382,9 @@ public class Main {
         //
         // 该代码作用是将用户输入的内容重新输出出来
         //
-        // 代码中传入 Scanner 构造函数的参数 System.in 与上一节中的 System.out 相反
+        // 代码中传入 Scanner 构造方法的参数 System.in 与上一节中的 System.out 相反
         // 它是一个标准输入流，输入源来自终端
-        // System.out 与 System.in 就像 C/C++ 的 cout 与 cin 一样，是一个 java 本身提供的流函数
+        // System.out 与 System.in 就像 C/C++ 的 cout 与 cin 一样，是一个 java 本身提供的流方法
         //
         // 上面代码片段中的 nextLine() 方法会读取整一行，包括空格
         // 而如果使用 next() 方法便会在读取到的第一个空格处停下
@@ -421,8 +482,185 @@ public class Main {
         //
         // 另外，与 C++ 一样， Java 也支持新版 for each 循环遍历方法
         // for (类名 变量名 : 类数组) [单条语句或一个块]
+        // 其中类名可用 var (推测类) 省略
         // 例如
         int[] arr = {1, 2, 3, 4, 5, 6};
         for(int i : arr) System.out.println(i);
     }
+
+    
+
+    // * java.math.BigInteger 类
+    public static void bigIntegerTest(){
+        // 对于超过 64 位的数，可使用 BigInteger 类
+        int intNum = 48123;
+        BigInteger realBigNum =
+                new BigInteger("14523489569198369858673674689262934691302972916514231");
+        // 前面说过，除 String 与一些基本类之外别的类基本不能使用运算符
+        // 该类的加减只能由成员方法实现
+
+        //通过 BigInteger 类内置的 valueOf(int/long) 方法可以将 int/long 转换为 BigInteger
+        BigInteger valueNum = BigInteger.valueOf(intNum);
+        
+        //通过 add subtract multiply divide mod 方法实现 加 减 乘 除 求余 操作
+        BigInteger addRes = realBigNum.add(valueNum);
+        BigInteger subRes = realBigNum.subtract(valueNum);
+        BigInteger mulRes = realBigNum.multiply(valueNum);
+        BigInteger divRes = realBigNum.divide(valueNum);
+        BigInteger modRes = realBigNum.mod(valueNum);
+        
+        // 通过 sqrt 方法实现求算术平方根
+        BigInteger sqrRes = realBigNum.sqrt();
+
+        // 通过 compareTo 方法实现比较
+        // 两者相同返回 0，前者大于后者返回大于 0 的数，后者大于前者返回小于 0 的数
+        int compareRes = realBigNum.compareTo(valueNum);
+    }
+
+
+    // 数组
+    public static void arrayTest(){
+
+    /* 数组的定义 */
+
+        // Java 定义数组有以下两种形式
+        int[] arr1 = new int[5];
+        int arr2[] = new int[5];
+        // 不建议使用第二种方式，一是为了与 C 语言风格进行区分，二是因为第一种可以将类型与变量名清晰地分开
+        // 数组与基础类型不同，请把它看成一个类
+
+        // Java 10 以上版本可以使用 var 来隐藏类型名
+        var arr3 = new int[5];
+
+        // 数组的大小可以为一个变量，也可以为 0
+        int num = 0;
+        var arr0 = new int[num];
+
+        // 可以用以下方式来给数组赋初始值
+        int[] arr4 = {1, 2, 3, 4, 5};
+        // 这种方式不用标明数组大小
+
+        // 也支持声明匿名数组
+        var arr5 = new int[] {1, 2, 3, 4, 5,}; // 数组声明的最后一位后允许有逗号
+
+    /* 数组的修改与访问 */
+
+        // 与 C 一样，可以用以下方式访问或修改数组内元素
+        arr5[1] = 1;
+        System.out.println(arr5[2]);
+
+        // 可以使用 for each 语法来遍历数组
+        for(var it : arr5)
+            System.out.println(it);
+        // 但是要注意 for each 语法是只读的，不能用它来修改数组元素
+
+        // 另外，可以用 Arrays 类的 toString() 方法输出元素列表，后面会讲到这个类
+        System.out.println(Arrays.toString(arr5));
+        // [1, 1, 3, 4, 5]
+
+    /* 数组的复制 */
+
+        // 与其他自定类一样，数组也是对象引用的
+        var arr6 = arr5;
+        // 这种做法会使得两者引用同一个对象，一个数组在发生变化的同时另一个也会变
+
+        // 利用 Arrays.copyOf() 方法可以获得一份数组的拷贝
+        var arr7 = Arrays.copyOf(arr5, arr5.length);
+        // 第一个参数为要复制的数组
+        // 第二个参数为要复制的长度，如果该长度大于要复制的数组，大于的部分会被赋值为默认值
+
+        // 利用 clone() 方法可以获得一份数组的完整拷贝
+        var arr8 = arr5.clone();
+
+        // 与其他自定类一样，数组类的 == 符号并不会代表两侧数组的内容是否相等，而是会判断两个对象是否引用同一个对象
+        System.out.println("arr8 = arr5.clone() 后，arr8 == arr5 的值为 " + (arr8 == arr5)); // false
+        System.out.println("arr6 = arr5 后，arr6 == arr5 的值为 " + (arr6 == arr5)); // true
+
+    /* Arrays 类 */
+
+        // 需要注意的是，Array 与 Arrays 这两个类不是一个东西
+        // Array 是数组的包装类，是一个储存结构
+        // Arrays 是一个静态方法类，封装了一些针对 Array 类的算法
+
+        // 上面教程已经介绍了一个 Arrays 类方法 toString() 与 copyOf()
+
+        // 利用 Arrays.equals() 可以判断两侧数组的内容是否相等
+        System.out.println("Arrays.equals(arr8, arr5)" + Arrays.equals(arr8, arr5));
+
+
+        // 这里要介绍 Java 数组内置的排序方法，顺便介绍一个快速生成随机数的方法
+
+        // Java 内置了一个快速生成随机数的方法
+        var arr = new int[10];
+
+        for(int i = 0; i < 10; i ++)
+            arr[i] = (int)(Math.random() * 100);
+        // Math.random() 返回的是一个 0 ~ 1 之间的随机 double 值
+        System.out.print("排序前:");
+        for(var it : arr)
+            System.out.print(it + " ");
+        System.out.println();
+
+        Arrays.sort(arr);
+
+        System.out.print("排序后:");
+        for(var it : arr)
+            System.out.print(it + " ");
+        System.out.println();
+
+        // 另外，Arrays 类还提供了二分检索的方法 Arrays.binarySearch() ，这个方法仅对排序的数组后有效
+
+        var sortedArr = new int[] {1, 2, 3, 4, 6, 7, 8};
+        System.out.println("二分查找到 3 对应的下标为：" + Arrays.binarySearch(sortedArr,3));
+
+        // 如果没有找到，它会返回一个负数，这个数加上 1 再乘以 -1 是当前数组中插入该数后依然有序的位置
+
+        System.out.println("二分查找到 5 对应的下标为：" + Arrays.binarySearch(sortedArr,5));
+
+        // 如果输入的数组并不有序，那么会造成误判
+        var unsortedArr = new int[] {1, 2, 6, 4, 5, 3, 7};
+        System.out.println("二分查找到 3 对应的下标为：" + Arrays.binarySearch(unsortedArr,3));
+
+    /* 多维数组 (以二维数组为例) */
+
+        var superArr = new int[][] {
+                {1, 2, 3},
+                {4, 5 ,6},
+                {7, 8, 9}};
+
+        // 可以通过 Arrays.deepToString() 方法快速获取到元素列表
+        System.out.println(Arrays.deepToString(superArr));
+        // [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+
+        // 也可以通过 Arrays.deepEquals() 判断两个多维数组是否相等
+        System.out.println(Arrays.deepEquals(superArr, superArr.clone()));
+
+        // 利用 for each 得到的是一个一维数组
+
+        for(int[] it : superArr)
+            for(int jt : it)
+                System.out.println(jt);
+
+        // 目前 for each 语句还不能处理多维数组的每个元素
+
+    /* Java 数组的本质与不规则数组 */
+
+        // 与 C/C++ 不同， Java 是完整的面向对象风格的开发语言
+        // Java 的数组的每一个元素都是对象的引用 (Java 的对象概念就是 C++ 的引用)
+        // 而对象与对象之间在内存上不一定会首尾相连
+        // 因此 Java 并不存在真正意义上的数组，只是保存着每个包含对象的引用
+
+        // 也因此二维数组的每一个成员数组的大小都是可变的
+        var specialArr1 = new int[][]{
+                {1, 2, 3},
+                {4, 5, 6, 7, 8},
+                {9}
+        };
+
+        var specialArr2 = new int[3][];
+        specialArr2[0] = arr5;
+        specialArr2[1] = new int[2];
+    }
+
+    // 基础章节已完结
 }
