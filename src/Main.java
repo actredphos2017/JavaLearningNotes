@@ -21,6 +21,7 @@ public class Main {
         IfTest();
         bigIntegerTest();
         arrayTest();
+
     }
 
     // Java 基础
@@ -49,7 +50,7 @@ public class Main {
     // JDK 全程 Java Development Kit, 即 Java 开发工具包，包含 JRE 、跨平台软件开发环境
     //
     // 如果你只是想运行 Java 程序，只需要 JRE ，如果你是 Java 软件开发者，需要的是 JDK
-    // 一个电脑上能同时安装多个版本的 JDK 、 JRE ，大多是 Java IDE 可以选择不同版本 JDK 进行编译
+    // 一台电脑上能同时安装多个版本的 JDK 、 JRE ，大多是 Java IDE 可以选择不同版本 JDK 进行编译
     // 运行一个 Java 程序既可以使用 JRE 也可以使用 JDK 。
     // 一台电脑上同时安装相同版本的 JRE 和 JDK 时， JRE 有可能是冗余的。
     //
